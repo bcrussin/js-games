@@ -1,0 +1,31 @@
+body {
+  background-color: black;
+  text-align: center;
+  color: white;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+#homeButton {
+  display: block;
+}
+
+#homeButton, #restartButton {
+  background-color: white;
+  border: 0;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 20px;
+  transition-duration: 0.3s;
+}
+
+#homeButton:hover, #restartButton:hover {
+  background-color: #bfbfbf;
+}
+
+#gameCanvas {
+  background-color: white;
+}
