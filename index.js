@@ -24,54 +24,54 @@ var menu = {
 var imageData = [
   {
     name: "Tetris",
-    dest: "/Tetris/tetris.html",
+    dest: "/tetris/tetris.html",
     img: "tetris"
   },
-  {
+  /*{
     name: "Flood",
-    dest: "/Flood/flood.html",
+    dest: "/flood/flood.html",
     img: "flood"
-  },
+  },*/
   {
   	name: "Snake",
-  	dest: "/Snake/snake.html",
+  	dest: "/snake/snake.html",
   	img: "snake"
   },
-  {
+  /*{
     name: "Knockoff",
-    dest: "/Knockoff/knockoff.html",
+    dest: "/knockoff/knockoff.html",
     img: "knockoff"
-  },
+  },*/
   {
     name: "Tron",
-    dest: "/Tron/tron.html",
+    dest: "/tron/tron.html",
     img: "tron"
   },
-  {
+  /*{
     name: "Raycast",
-    dest: "/Raycast/raycast.html",
+    dest: "/raycast/raycast.html",
     img: "raycast"
   },
   {
     name: "Map Maker",
-    dest: "/Map Maker/map_maker.html",
+    dest: "/map-maker/map_maker.html",
     img: "map_maker"
   },
   {
     name: "Asteroids",
-    dest: "/Asteroids/asteroids.html",
+    dest: "/asteroids/asteroids.html",
     img: "asteroids"
   },
   {
   	name: "Auto Sim",
-  	dest: "/Auto Sim/auto_sim.html",
+  	dest: "/auto Sim/auto_sim.html",
   	img: "auto_sim"
   },
   {
   	name: "Survival",
-  	dest: "/Survival/survival.html",
+  	dest: "/survival/survival.html",
   	img: "survival"
-  }
+  }*/
 ];
 
 var images = [];
