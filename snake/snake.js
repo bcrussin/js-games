@@ -10,6 +10,7 @@ var game = {
 	paused: false,
 	over: false,
 	endPos: [],
+	loop: null,
 	
 	end: function(pos) {
 		this.over = true;
@@ -75,6 +76,10 @@ var p = {
 	init: function() {
 		this.x = Math.round(grid.w / 2);
 		this.y = Math.round(grid.h / 2);
+		
+		this.rot = -1;
+		this.tail = [];
+		this.size = 0;
 		
 		this.lastMove = time.now;
 	},
@@ -194,6 +199,11 @@ document.addEventListener('keyup', function(e) {
   key.release(e.keyCode);
 });
 
+document.getElementById("restartButton").onclick = function() {
+	window.cancelAnimationFrame(game.loop);
+	setup();
+};
+
 //_____ SETUP AND UPDATE FUNCTIONS _____//
 
 function setup() {
@@ -207,7 +217,7 @@ function setup() {
 	apple.spawn();
 	
 	time.start = window.performance.now();
-	window.requestAnimationFrame(update);
+	game.loop = window.requestAnimationFrame(update);
 }
 
 function update() {
@@ -236,7 +246,7 @@ function update() {
 		c.rect(game.endPos[0] * grid.cw, game.endPos[1] * grid.ch, grid.cw, grid.ch, "grey");
 	}
 	
-	window.requestAnimationFrame(update);
+	game.loop = window.requestAnimationFrame(update);
 }
 
 setup();
