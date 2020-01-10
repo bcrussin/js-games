@@ -23,9 +23,9 @@ var menu = {
 
 var imageData = [
   {
-    name: "Tetris",
-    dest: "/tetris/tetris.html",
-    img: "tetris"
+	name: "Tetris",
+	dest: "/tetris/tetris.html",
+	img: "tetris"
   },
   /*{
     name: "Flood",
@@ -37,20 +37,20 @@ var imageData = [
   	dest: "/snake/snake.html",
   	img: "snake"
   },
+  {
+  	name: "Pong",
+  	dest: "/Pong/pong.html",
+  	img: "pong"
+  },
   /*{
     name: "Knockoff",
     dest: "/knockoff/knockoff.html",
     img: "knockoff"
   },*/
   {
-    name: "Tron",
-    dest: "/tron/tron.html",
-    img: "tron"
-  },
-  {
-  	name: "Pong",
-  	dest: "/Pong/pong.html",
-  	img: "pong"
+	name: "Tron",
+	dest: "/tron/tron.html",
+	img: "tron"
   },
   /*{
     name: "Raycast",
