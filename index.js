@@ -47,6 +47,11 @@ var imageData = [
     dest: "/tron/tron.html",
     img: "tron"
   },
+  {
+  	name: "Pong",
+  	dest: "/Pong/pong.html",
+  	img: "pong"
+  },
   /*{
     name: "Raycast",
     dest: "/raycast/raycast.html",
