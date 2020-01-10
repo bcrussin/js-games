@@ -1,5 +1,5 @@
 //jshint maxerr: 999
-try{
+
 var canvas = document.getElementById('gameCanvas');
 var ctx = canvas.getContext('2d');
 
@@ -320,4 +320,3 @@ retroFont.load().then(function(font) {
 	document.fonts.add(font);
 	setup();
 });
-} catch(e) { alert(e.stack);}
