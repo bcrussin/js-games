@@ -98,6 +98,18 @@ var c = {
 		ctx.lineTo(x2, y2);
 		ctx.stroke();
 	},
+	
+	dashLine: function(x1, y1, x2, y2, thickness, c, dash, alpha) {
+		if(isNaN(alpha)) ctx.globalAlpha = 1;
+		else ctx.globalAlpha = alpha;
+		ctx.setLineDash(dash);
+		ctx.strokeStyle = c;
+		ctx.beginPath();
+		ctx.lineWidth = thickness;
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+	},
   
 	text: function(text, x, y, size, c, centered, alpha) {
 		if(isNaN(alpha)) ctx.globalAlpha = 1;
@@ -105,6 +117,17 @@ var c = {
 		if(centered === true) ctx.textAlign = "center";
 		else ctx.textAlign = "left";
 		ctx.font = size + "px Arial";
+		ctx.fillStyle = c;
+		ctx.textAlign = centered;
+		ctx.fillText(text, x, y);
+	},
+	
+	textFont: function(text, x, y, size, font, c, centered, alpha) {
+		if(isNaN(alpha)) ctx.globalAlpha = 1;
+		else ctx.globalAlpha = alpha;
+		if(centered === true) ctx.textAlign = "center";
+		else ctx.textAlign = "left";
+		ctx.font = size + "px " + font;
 		ctx.fillStyle = c;
 		ctx.textAlign = centered;
 		ctx.fillText(text, x, y);
