@@ -33,14 +33,14 @@ var imageData = [
     img: "flood"
   },*/
   {
-  	name: "Snake",
-  	dest: "/snake/snake.html",
-  	img: "snake"
-  },
-  {
   	name: "Pong",
   	dest: "/Pong/pong.html",
   	img: "pong"
+  },
+  {
+  	name: "Snake",
+  	dest: "/snake/snake.html",
+  	img: "snake"
   },
   /*{
     name: "Knockoff",
@@ -171,14 +171,24 @@ function update() {
   var left = Math.floor(((canvas.width / 2) / menu.spacing) - menu.index) - 1;
   var right = Math.ceil(((canvas.width / 2) / menu.spacing) + menu.index);
   
-  console.log(left + ", " + right);
+  var sizeMod, newWidth, newHeight;
   
-  for(var i = Math.max(left, 0); i < Math.min(imageData.length, right); i++) {
-    var sizeMod = (Math.pow((i * menu.spacing) - menu.x, 2) / 100000) + 1.5;
+  for(let i = menu.index + 1; i < Math.min(imageData.length, right); i++) {
+    sizeMod = (Math.pow((i * menu.spacing) - menu.x, 2) / 100000) + 1.5;
+    sizeMod /= canvas.height / 500;
+    newWidth = images[i].width / sizeMod;
+    newHeight = images[i].height / sizeMod;
+    
+    ctx.drawImage(images[i], ((canvas.width / 2) - (newWidth / 2)) + ((i * menu.spacing) - menu.x), canvas.height / 20, newWidth, newHeight);
+    c.text(imageData[i].name, ((canvas.width / 2) + ((i * menu.spacing) - menu.x)), ((images[i].height * 1.25) / sizeMod), 100 / sizeMod, "white", true);
+  }
+  
+  for(let i = Math.max(left, 0); i <= menu.index; i++) {
+    sizeMod = (Math.pow((i * menu.spacing) - menu.x, 2) / 100000) + 1.5;
     sizeMod /= canvas.height / 500;
     
-    var newWidth = images[i].width / sizeMod;
-    var newHeight = images[i].height / sizeMod;
+    newWidth = images[i].width / sizeMod;
+    newHeight = images[i].height / sizeMod;
     
     ctx.drawImage(images[i], ((canvas.width / 2) - (newWidth / 2)) + ((i * menu.spacing) - menu.x), canvas.height / 20, newWidth, newHeight);
     c.text(imageData[i].name, ((canvas.width / 2) + ((i * menu.spacing) - menu.x)), ((images[i].height * 1.25) / sizeMod), 100 / sizeMod, "white", true);
