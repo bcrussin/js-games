@@ -34,7 +34,7 @@ var imageData = [
   },*/
   {
   	name: "Pong",
-  	dest: "/Pong/pong.html",
+  	dest: "/pong/pong.html",
   	img: "pong"
   },
   {
