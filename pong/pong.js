@@ -13,6 +13,8 @@ var time = {
 	start: null,
 	curr: null,
 	elapsed: null,
+	last: null,
+	delta: null,
 	round: {
 		start: null,
 		elapsed: null
@@ -24,7 +26,7 @@ var p = {
 	x: null,
 	y: null,
 	w: 15,
-	h: 60,
+	h: 70,
 	spd: 7,
 	
 	update: function() {
@@ -43,7 +45,7 @@ var e = {
 	y: null,
 	yVel: 0,
 	w: 15,
-	h: 60,
+	h: 70,
 	response: 6,
 	spd: 5,
 	dir: 0,
@@ -60,7 +62,7 @@ var e = {
 		this.y += this.spd * this.dir;*/
 		
 		//if(Math.abs(eb.xVel) > 0)
-		this.yVel = ((eb.y + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response;
+		this.yVel += ((((eb.y + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
 		//this.yVel = ((b.y + (b.size / 2)) - (this.y + (this.h / 2))) / this.response;
 		//else this.yVel = 0;
 		
@@ -77,13 +79,13 @@ var eb = {
 	xVel: 0,
 	yVel: 0,
 	error: 0,
-	mult: 1.5,
+	mult: 1.3,
 	
 	spawn: function() {
 		this.x = b.x + (this.error * Math.sign(Math.random() - 0.5));
-		this.y = b.y + (this.error * Math.sign(Math.random() - 0.5));
+		this.y = b.y + (this.error * b.yVel * 0.2 * Math.sign(Math.random() - 0.5));
 		this.xVel = (b.xVel * this.mult) + (this.error * 0.001 * Math.sign(Math.random() - 0.5));
-		this.yVel = (b.yVel * this.mult) + (this.error * 0.001 * Math.sign(Math.random() - 0.5));
+		this.yVel = (b.yVel * this.mult) + (this.error * (b.yVel / b.yCap) * 0.0005 * Math.sign(Math.random() - 0.5)) + (b.yVel / 50);
 		e.offSet = random(e.h * -0.3, e.h * 0.3);
 	},
 	
@@ -97,13 +99,15 @@ var eb = {
 		
 		if(this.y < 0) {
 			this.yVel *= -1;
-			this.xVel += randomf(-2, 2);
+			this.xVel += randomf(-3, 3);
 			this.y = 0;
 		} else if(this.y + b.size > canvas.height) {
 			this.yVel *= -1;
-			this.xVel += randomf(-2, 2);
+			this.xVel += randomf(-3, 3);
 			this.y = canvas.height - b.size;
 		}
+		
+		if(this.xVel === 0) this.yVel = (b.y - this.y) / 120;
 		
 		this.x += this.xVel;
 		this.y += this.yVel;
@@ -257,14 +261,18 @@ function setup() {
 	game.lastSide = 0;
 	
 	time.start = new Date();
+	time.last = time.start;
 	time.round.start = time.start;
 	window.requestAnimationFrame(update);
 }
 
 function update() {
 	time.curr = new Date();
+	time.delta = time.curr - time.last;
+	time.last = time.curr;
 	time.elapsed = time.start - time.curr;
-	time.round.elapsed = time.curr - time.round.start;
+	
+	if(!game.paused && !game.waiting) time.round.elapsed += time.delta;
 	
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -273,10 +281,10 @@ function update() {
 	if(!game.paused && !game.waiting && game.winner === 0) {
 	
 			//run updates
-		p.update();
-		e.update();
 		b.update();
 		eb.update();
+		p.update();
+		e.update();
 		
 		eb.error = time.round.elapsed * 0.0005;
 	} else if(game.waiting && game.winner === 0) {
@@ -287,6 +295,8 @@ function update() {
 			b.xVel = game.lastSide === 0 ? b.startXCap * -1 : b.startXCap;
 			b.yVel = 0;
 			
+			b.xCap = b.startXCap;
+			b.yCap = b.startYCap;
 			eb.spawn();
 			
 			time.round.start = new Date();
