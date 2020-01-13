@@ -49,6 +49,7 @@ var p = {
 	w: 15,
 	_h: 70,
 	h: 70,
+	_spd: 7,
 	spd: 7,
 	
 	update: function() {
@@ -68,8 +69,10 @@ var e = {
 	yVel: 0,
 	w: 15,
 	h: 70,
+	_response: 6,
 	response: 6,
-	spd: 5,
+	_spd: 7,
+	spd: 7,
 	dir: 0,
 	offSet: null,
 	
@@ -92,7 +95,16 @@ var e = {
 			this.y += this.spd * this.dir;*/
 			
 			//if(Math.abs(eb.xVel) > 0)
-			this.yVel += ((((eb.y + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
+			//var per = (((b.x / canvas.width) * b.y) + ((1 - (b.x / canvas.width)) * eb.y)) / 2;
+			var per = (b.x / canvas.width);
+			var eby = (per * (b.y - eb.y)) + eb.y;
+			
+			
+			//document.getElementById("debug").innerHTML = Math.round(b.y) + ", " + Math.round(eb.y) + ", " + Math.round(eby);
+			//c.rect(b.x, eby, 15, 15, "green");
+			
+			
+			this.yVel += ((((eby + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
 			//this.yVel = ((b.y + (b.size / 2)) - (this.y + (this.h / 2))) / this.response;
 			//else this.yVel = 0;
 			
@@ -110,14 +122,20 @@ var eb = {
 	y: null,
 	xVel: 0,
 	yVel: 0,
+	_xErr: 0.001,
+	_yErr: 0.0005,
+	xErr: 0.001,
+	yErr: 0.0005,
+	_errorRate: 0.0005,
+	errorRate: 0.0005,
 	error: 0,
 	mult: 1.3,
 	
 	spawn: function() {
 		this.x = b.x + (this.error * Math.sign(Math.random() - 0.5));
 		this.y = b.y + (this.error * b.yVel * 0.2 * Math.sign(Math.random() - 0.5));
-		this.xVel = (b.xVel * this.mult) + (this.error * 0.001 * Math.sign(Math.random() - 0.5));
-		this.yVel = (b.yVel * this.mult) + (this.error * (b.yVel / b.yCap) * 0.0005 * Math.sign(Math.random() - 0.5)) + (b.yVel / 50);
+		this.xVel = (b.xVel * this.mult) + (this.error * this.xErr * Math.sign(Math.random() - 0.5));
+		this.yVel = (b.yVel * this.mult) + (this.error * (b.yVel / b.yCap) * this.yErr * Math.sign(Math.random() - 0.5)) + (b.yVel / 50);
 		e.offSet = random(e.h * -0.3, e.h * 0.3);
 	},
 	
@@ -151,6 +169,8 @@ var b = {
 	y: null,
 	xVel: null,
 	yVel: null,
+	_xCap: 9,
+	_yCap: 5,
 	startXCap: 9,
 	startYCap: 5,
 	xCap: null,
@@ -231,22 +251,91 @@ retroFont.load().then(function(font) {
 
 doc.paddleSize = document.getElementById("paddleSize");
 doc.paddleSlider = document.getElementById("paddleSlider");
+doc.ballSpeed = document.getElementById("ballSpeed");
+doc.ballSlider = document.getElementById("ballSlider");
+doc.difficulty = document.getElementById("difficulty");
+doc.difficultySlider = document.getElementById("difficultySlider");
 doc.multiplayer = document.getElementById("multiplayer");
 doc.multiplayerText = document.getElementById("multiplayerText");
 
 doc.paddleSlider.value = 50;
 doc.paddleSize.value = doc.paddleSlider.value;
+
+doc.ballSlider.value = 50;
+doc.ballSpeed.value = doc.ballSlider.value;
 	
-doc.paddleSlider.oninput = function() {
-	var val = (this.value / 50) * p._h;
+doc.difficultySlider.value = 50;
+doc.difficulty.value = doc.difficultySlider.value;
+
+doc.paddleSlider.oninput = paddleSliderInput;
+
+doc.paddleSize.onclick = function() {
+	doc.paddleSlider.value = prompt("Input paddle size from 0 to 100:", 50);
+	paddleSliderInput();
+};
+
+function paddleSliderInput() {
+	var max = 100;
+	var min = 10;
+	
+	var val = (((doc.paddleSlider.value - 0) * (max - min)) / (100 - 0)) + min;
+	val = (val / ((max + min) / 2)) * p._h;
+	
 	p.y -= (val - p.h) / 2;
 	p.h = val;
 	
 	e.y -= (val - e.h) / 2;
 	e.h = val;
 	
-	doc.paddleSize.value = this.value;
+	doc.paddleSize.value = doc.paddleSlider.value;
+}
+
+doc.ballSlider.oninput = ballSliderInput;
+
+doc.ballSpeed.onclick = function() {
+	doc.ballSlider.value = prompt("Input ball speed from 0 to 100", 50);
+	ballSliderInput();
 };
+
+function ballSliderInput() {
+	var max = 100;
+	var min = 25;
+	
+	var val = (((doc.ballSlider.value - 0) * (max - min)) / (100 - 0)) + min;
+	val = val / ((max + min) / 2);
+	
+	b.startXCap = val * b._xCap;
+	b.startYCap = val * 0.8 * b._yCap;
+	
+	p.spd = val * p._spd;
+	e.spd = val * 1.2 * e._spd;
+	
+	doc.ballSpeed.value = doc.ballSlider.value;
+}
+
+doc.difficultySlider.oninput = difficultySliderInput;
+
+doc.difficulty.onclick = function() {
+	doc.difficultySlider.value = prompt("Input difficulty from 0 to 100", 50);
+	difficultySliderInput();
+};
+
+function difficultySliderInput() {
+	var max = 90;
+	var min = 40;
+	
+	var val = (((doc.difficultySlider.value - 0) * (max - min)) / (100 - 0)) + min;
+	val = (100 - val) / ((max + min) / 2);
+	
+	e.response = val * 2 * e._response;
+	eb.xErr = val * 1.5 * eb._xErr;
+	eb.yErr = val * 1.5 * eb._yErr;
+	eb.errorRate = val * 1.5 * eb._errorRate;
+	
+	e.error = 0;
+	
+	doc.difficulty.value = doc.difficultySlider.value;
+}
 
 doc.multiplayerText.onclick = function() {
 	doc.multiplayer.click();
@@ -355,7 +444,7 @@ function update() {
 		p.update();
 		e.update();
 		
-		eb.error = time.round.elapsed * 0.0005;
+		eb.error = time.round.elapsed * eb.errorRate;
 	} else if(game.waiting && game.winner === 0) {
 		
 		c.textFont("Press Space", canvas.width / 2, canvas.height * 0.4, 50, "retro", "white", true);
