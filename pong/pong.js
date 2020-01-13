@@ -7,6 +7,27 @@ var game = {
 	winner: 0,
 	paused: false,
 	waiting: true,
+	isMultiplayer: false,
+	
+	changeMode: function() {
+		this.isMultiplayer = !this.isMultiplayer;
+		if(this.isMultiplayer) {
+			key.names.up1 = [87];
+			key.names.down1 = [83];
+			key.names.up2 = [38];
+			key.names.down2 = [40];
+		} else {
+			key.names.up1 = [87, 38];
+			key.names.down1 = [83, 40];
+			key.names.up2 = [];
+			key.names.down2 = [];
+		}
+	}
+};
+
+var doc = {
+	paddleSize: null,
+	paddleSlider: null
 };
 
 var time = {
@@ -26,12 +47,13 @@ var p = {
 	x: null,
 	y: null,
 	w: 15,
+	_h: 70,
 	h: 70,
 	spd: 7,
 	
 	update: function() {
-		if(key.get('up')) this.y -= this.spd;
-		if(key.get('down')) this.y += this.spd;
+		if(key.get('up1')) this.y -= this.spd;
+		if(key.get('down1')) this.y += this.spd;
 		
 		if(b.yCap > this.spd) this.spd = b.yCap + 1;
 		
@@ -52,24 +74,34 @@ var e = {
 	offSet: null,
 	
 	update: function() {
-		//if(key.get('up')) this.y -= this.spd;
-		//if(key.get('down')) this.y += this.spd;
+		if(game.isMultiplayer) {
+			
+			if(key.get('up2')) this.y -= this.spd;
+			if(key.get('down2')) this.y += this.spd;
 		
-		/*yDiff = ((eb.y + (b.size / 2)) - (this.y + (this.h / 2)));
-		if(yDiff > this.spd * 10) this.dir = 1;
-		else if(yDiff < this.spd * 10) this.dir = -1;
-		else this.dir = 0;
-		this.y += this.spd * this.dir;*/
+			if(b.yCap > this.spd) this.spd = b.yCap + 1;
 		
-		//if(Math.abs(eb.xVel) > 0)
-		this.yVel += ((((eb.y + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
-		//this.yVel = ((b.y + (b.size / 2)) - (this.y + (this.h / 2))) / this.response;
-		//else this.yVel = 0;
-		
-		if(b.yCap > this.spd) this.spd = b.yCap + 0.5;
-		
-		this.y += Math.min(Math.abs(this.yVel), this.spd) * Math.sign(this.yVel);
-		this.y = Math.min(Math.max(this.y, 0), canvas.height - this.h);
+			this.y = Math.min(Math.max(this.y, 0), canvas.height - this.h);
+			
+		} else {
+			
+			/*yDiff = ((eb.y + (b.size / 2)) - (this.y + (this.h / 2)));
+			if(yDiff > this.spd * 10) this.dir = 1;
+			else if(yDiff < this.spd * 10) this.dir = -1;
+			else this.dir = 0;
+			this.y += this.spd * this.dir;*/
+			
+			//if(Math.abs(eb.xVel) > 0)
+			this.yVel += ((((eb.y + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
+			//this.yVel = ((b.y + (b.size / 2)) - (this.y + (this.h / 2))) / this.response;
+			//else this.yVel = 0;
+			
+			if(b.yCap > this.spd) this.spd = b.yCap + 0.5;
+			
+			this.y += Math.min(Math.abs(this.yVel), this.spd) * Math.sign(this.yVel);
+			this.y = Math.min(Math.max(this.y, 0), canvas.height - this.h);
+			
+		}
 	}
 };
 
@@ -186,14 +218,52 @@ var b = {
 	}
 };
 
+//_____ BEGIN SETUP FUNCTION _____//
+
+retroFont = new FontFace('retro', 'url(Square.ttf)');
+retroFont.load().then(function(font) {
+	document.fonts.add(font);
+	setup();
+});
+
+//_____ HTML INPUT FUNCTIONS _____//
+
+
+doc.paddleSize = document.getElementById("paddleSize");
+doc.paddleSlider = document.getElementById("paddleSlider");
+doc.multiplayer = document.getElementById("multiplayer");
+doc.multiplayerText = document.getElementById("multiplayerText");
+
+doc.paddleSlider.value = 50;
+doc.paddleSize.value = doc.paddleSlider.value;
+	
+doc.paddleSlider.oninput = function() {
+	var val = (this.value / 50) * p._h;
+	p.y -= (val - p.h) / 2;
+	p.h = val;
+	
+	e.y -= (val - e.h) / 2;
+	e.h = val;
+	
+	doc.paddleSize.value = this.value;
+};
+
+doc.multiplayerText.onclick = function() {
+	doc.multiplayer.click();
+};
+
+doc.multiplayer.onclick = function() {
+	game.changeMode();
+};
+
 //_____ INPUT FUNCTIONS _____//
 var key = {
 	pressed: {},
 	last: undefined,
 	noPress: {},
 	names: {
-		up: [87, 38],
-		down: [83, 40],
+		up1: [87, 38],
+		down1: [83, 40],
 		enter: [32]
 	},
 	
@@ -274,7 +344,6 @@ function update() {
 	
 	if(!game.paused && !game.waiting) time.round.elapsed += time.delta;
 	
-	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	c.rect(0, 0, canvas.width, canvas.height, "black");
 	
@@ -323,10 +392,3 @@ function update() {
 	
 	window.requestAnimationFrame(update);
 }
-
-
-retroFont = new FontFace('retro', 'url(Square.ttf)');
-retroFont.load().then(function(font) {
-	document.fonts.add(font);
-	setup();
-});
