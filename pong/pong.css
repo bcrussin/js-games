@@ -9,6 +9,20 @@ a {
   text-decoration: inherit;
 }
 
+#options {
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.cell {
+	display: table-cell;
+}
+
+#paddleSize {
+	width: 3em;
+}
+
 #homeButton {
   display: block;
 }
