@@ -8,6 +8,26 @@
   <body>
     <button type="button" id="homeButton"><a href="../index.html">Home</a></button>
     <canvas id="gameCanvas"></canvas>
+    
+    <br/>
+    
+	  <div id="options">
+	    
+	    <span class="cell">
+		  	<span>Paddle Size: </span>
+		  	<input id="paddleSize" type="number" min="10" max="100">
+		  	<br/>
+		  	<input id="paddleSlider" type="range" min="10" max="100">
+	  	</span>
+	    	
+	    <span class="cell">
+		    &nbsp;&nbsp;&nbsp;
+		    <input type="checkbox" id="multiplayer">
+		    <span id="multiplayerText">Multiplayer</span>
+	    </span>
+	    
+	  </div>
+    
     <br/>
     <p id="debug"></p>
     <script src="../globalFunctions.js"></script>
