@@ -325,9 +325,10 @@ function difficultySliderInput() {
 	var min = 40;
 	
 	var val = (((doc.difficultySlider.value - 0) * (max - min)) / (100 - 0)) + min;
-	val = (100 - val) / ((max + min) / 2);
+	val = val / ((max + min) / 2);
+	invVal = (100 - val) / ((max + min) / 2);
 	
-	e.response = val * 2 * e._response;
+	e.response = invVal * 2 * e._response;
 	eb.xErr = val * 1.5 * eb._xErr;
 	eb.yErr = val * 1.5 * eb._yErr;
 	eb.errorRate = val * 1.5 * eb._errorRate;
