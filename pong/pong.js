@@ -385,7 +385,7 @@ document.addEventListener('keydown', function(e) {
   e.preventDefault();
   switch(e.keyCode) {
   	case 80:
-  		game.paused = !game.paused;
+  		if(!game.waiting && game.winner === 0) game.paused = !game.paused;
   		break;
 		default:
   		key.press(e.keyCode);
@@ -476,6 +476,12 @@ function update() {
 	c.rect(b.x, b.y, b.size, b.size, "white");
 	//c.rect(eb.x, eb.y, b.size, b.size, "yellow", 0.5);
 	
+	if(game.paused) {
+		c.rect((canvas.width / 2) - 30, (canvas.height / 2) - 35, 60, 70, "black", 0.8);
+		c.rect((canvas.width / 2) - 20, (canvas.height / 2) - 30, 10, 60, "white");
+		c.rect((canvas.width / 2) + 10, (canvas.height / 2) - 30, 10, 60, "white");
+	}
+	//c.textFont("||", canvas.width / 2, canvas.height / 2, "retro", "white", true);
 	if(game.winner > 0) c.textFont("You " + (game.winner === 1 ? "Win!" : "Lose"), canvas.width / 2, canvas.height * 0.4, 60, "retro", "white", true);
 	
 	window.requestAnimationFrame(update);
