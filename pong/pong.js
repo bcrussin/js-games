@@ -36,10 +36,7 @@ var time = {
 	elapsed: null,
 	last: null,
 	delta: null,
-	round: {
-		start: null,
-		elapsed: null
-	},
+	roundTime: null,
 };
 
 var p = {
@@ -178,8 +175,9 @@ var b = {
 	size: 10,
 	
 	update: function() {
-		this.xCap = this.startXCap + (time.round.elapsed / 30000);
-		this.yCap = this.startYCap + (time.round.elapsed / 30000);
+			//increased speed as round progresses
+		this.xCap = this.startXCap + (time.roundTime / 30000);
+		this.yCap = this.startYCap + (time.roundTime / 30000);
 		
 			//calculate collision
 		cx = this.x + this.xVel;
@@ -217,6 +215,7 @@ var b = {
 		this.x += this.xVel;
 		this.y += this.yVel;
 		
+			//give points if goal is scored
 		if(this.x < 0) {
 			e.score++;
 			this.reset(0);
@@ -422,7 +421,6 @@ function setup() {
 	
 	time.start = new Date();
 	time.last = time.start;
-	time.round.start = time.start;
 	window.requestAnimationFrame(update);
 }
 
@@ -432,7 +430,7 @@ function update() {
 	time.last = time.curr;
 	time.elapsed = time.start - time.curr;
 	
-	if(!game.paused && !game.waiting) time.round.elapsed += time.delta;
+	if(!game.paused && !game.waiting) time.roundTime += time.delta;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	c.rect(0, 0, canvas.width, canvas.height, "black");
@@ -445,7 +443,7 @@ function update() {
 		p.update();
 		e.update();
 		
-		eb.error = time.round.elapsed * eb.errorRate;
+		eb.error = time.roundTime * eb.errorRate;
 	} else if(game.waiting && game.winner === 0) {
 		
 		c.textFont("Press Space", canvas.width / 2, canvas.height * 0.4, 50, "retro", "white", true);
@@ -458,7 +456,7 @@ function update() {
 			b.yCap = b.startYCap;
 			eb.spawn();
 			
-			time.round.start = new Date();
+			time.roundTime = 0;
 			
 			game.waiting = false;
 		}
