@@ -723,13 +723,16 @@ function update() {
   var lv = game.levelChanged ? game.level - 1 : game.level;
   var mult = Math.pow(game.points.curve, lv - 1);
   //if(game.deltaScore > 0) console.log(game.deltaScore + ", " + (game.points.block * mult) + ", (" + (Math.round(game.points.block * mult) + Math.round((game.points.line * (game.points.stack * game.last.completed)) * mult * game.last.quickMult)) + ")");
-  if(game.deltaScore !== Math.round(game.points.block * mult)
+  
+  	//DETECT CHEATING
+  /*if(game.deltaScore !== Math.round(game.points.block * mult)
   	&& game.deltaScore !== Math.round(game.points.block * mult) + Math.round((game.points.line * (game.points.stack * game.last.completed)) * mult * game.last.quickMult)
   	&& game.deltaScore !== Math.round((game.points.line * (game.points.stack * game.last.completed)) * mult * game.last.quickMult)
   	&& game.deltaScore !== 0) {
   		game.score = -999;
   		game.end();
-  	}
+  	}*/
+  	
   game.levelChanged = false;
   
   
