@@ -11,7 +11,27 @@
     
     <br/>
     
-	  <div id="options">
+    <div class="options">
+    	
+	  	<span class="cell">
+		    <input type="checkbox" id="easy">
+		    <span id="easyText">Easy</span>
+		    
+		    <input type="checkbox" id="medium">
+		    <span id="mediumText">Medium</span>
+		    
+		    <input type="checkbox" id="hard">
+		    <span id="hardText">Hard</span>
+		    
+		    <input type="checkbox" id="extreme">
+		    <span id="extremeText">Extreme</span>
+	  	</span>
+	  	
+    </div>
+    
+    <br/>
+    
+	  <div class="options">
 	    
 	    <span class="cell">
 		  	<span>Paddle Size: </span>
@@ -21,14 +41,21 @@
 	  	</span>
 	  	
 	  	<span class="cell">
-	  		<span>Speed: </span>
+	  		<span>Paddle Speed: </span>
+	  		<input id="paddleSpeed" type="number" min="0" max="100">
+	  		<br/>
+	  		<input id="paddleSpeedSlider" type="range" min="0" max="100">
+	  	</span>
+	  	
+	  	<span class="cell">
+	  		<span>Ball Speed: </span>
 	  		<input id="ballSpeed" type="number" min="0" max="100">
 	  		<br/>
 	  		<input id="ballSlider" type="range" min="0" max="100">
 	  	</span>
 	  	
 	  	<span class="cell">
-	    	<span>AI Difficulty: </span>
+	    	<span>AI Level: </span>
 	    	<input id="difficulty" type="number" min="0" max="100">
 	  		<br/>
 	  		<input id="difficultySlider" type="range" min="0" max="100">
@@ -41,6 +68,10 @@
 	    </span>
 	    
 	  </div>
+	  
+	  <br/>
+	  
+	  <button id="restart">Restart</button>
     
     <br/>
     <p id="debug"></p>
