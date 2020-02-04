@@ -1,7 +1,18 @@
 //jshint maxerr: 999
 
+function debug(d) {
+	document.getElementById("debug").innerHTML = d;
+}
+
 var canvas = document.getElementById('gameCanvas');
 var ctx = canvas.getContext('2d');
+
+var levels = [
+	[30, 40, 40, 15],
+	[25, 50, 50, 50],
+	[20, 70, 70, 75],
+	[15, 80, 80, 80]
+];
 
 var game = {
 	winner: 0,
@@ -44,16 +55,14 @@ var p = {
 	x: null,
 	y: null,
 	w: 15,
-	_h: 70,
-	h: 70,
+	_h: 140,
+	h: null,
 	_spd: 7,
 	spd: 7,
 	
 	update: function() {
 		if(key.get('up1')) this.y -= this.spd;
 		if(key.get('down1')) this.y += this.spd;
-		
-		if(b.yCap > this.spd) this.spd = b.yCap + 1;
 		
 		this.y = Math.min(Math.max(this.y, 0), canvas.height - this.h);
 	}
@@ -65,13 +74,13 @@ var e = {
 	y: null,
 	yVel: 0,
 	w: 15,
-	h: 70,
-	_response: 6,
-	response: 6,
+	h: null,
+	_response: 3,
+	response: null,
 	_spd: 7,
 	spd: 7,
 	dir: 0,
-	offSet: null,
+	offset: null,
 	
 	update: function() {
 		if(game.isMultiplayer) {
@@ -85,27 +94,16 @@ var e = {
 			
 		} else {
 			
-			/*yDiff = ((eb.y + (b.size / 2)) - (this.y + (this.h / 2)));
-			if(yDiff > this.spd * 10) this.dir = 1;
-			else if(yDiff < this.spd * 10) this.dir = -1;
-			else this.dir = 0;
-			this.y += this.spd * this.dir;*/
-			
-			//if(Math.abs(eb.xVel) > 0)
-			//var per = (((b.x / canvas.width) * b.y) + ((1 - (b.x / canvas.width)) * eb.y)) / 2;
-			var per = (b.x / canvas.width);
+			var per = 1 - (b.x / (canvas.width * 0.8));
 			var eby = (per * (b.y - eb.y)) + eb.y;
 			
 			
 			//document.getElementById("debug").innerHTML = Math.round(b.y) + ", " + Math.round(eb.y) + ", " + Math.round(eby);
-			//c.rect(b.x, eby, 15, 15, "green");
+			//c.rect(this.x - 20, eby, 15, 15, "green");
 			
-			
-			this.yVel += ((((eby + (b.size / 2)) - (this.y + (this.h / 2)) + this.offSet) / this.response) - this.yVel) / 3;
+			this.yVel += ((((eby + (b.size / 2)) - (this.y + (this.h / 2)) + this.offset) / this.response) - this.yVel);
 			//this.yVel = ((b.y + (b.size / 2)) - (this.y + (this.h / 2))) / this.response;
 			//else this.yVel = 0;
-			
-			if(b.yCap > this.spd) this.spd = b.yCap + 0.5;
 			
 			this.y += Math.min(Math.abs(this.yVel), this.spd) * Math.sign(this.yVel);
 			this.y = Math.min(Math.max(this.y, 0), canvas.height - this.h);
@@ -119,21 +117,21 @@ var eb = {
 	y: null,
 	xVel: 0,
 	yVel: 0,
-	_xErr: 0.001,
-	_yErr: 0.0005,
-	xErr: 0.001,
-	yErr: 0.0005,
-	_errorRate: 0.0005,
-	errorRate: 0.0005,
+	_xErr: 0.005,
+	_yErr: 0.0003,
+	xErr: null,
+	yErr: null,
+	_errorRate: 0.001,
+	errorRate: null,
 	error: 0,
-	mult: 1.3,
+	mult: 1.5,
 	
 	spawn: function() {
 		this.x = b.x + (this.error * Math.sign(Math.random() - 0.5));
 		this.y = b.y + (this.error * b.yVel * 0.2 * Math.sign(Math.random() - 0.5));
 		this.xVel = (b.xVel * this.mult) + (this.error * this.xErr * Math.sign(Math.random() - 0.5));
-		this.yVel = (b.yVel * this.mult) + (this.error * (b.yVel / b.yCap) * this.yErr * Math.sign(Math.random() - 0.5)) + (b.yVel / 50);
-		e.offSet = random(e.h * -0.3, e.h * 0.3);
+		this.yVel = (b.yVel * this.mult) + (this.error * (b.yVel / b.yCap) * this.yErr * Math.sign(Math.random() - 0.5)) + (b.yVel / 100);
+		e.offset = (Math.random() < 0.5 ? -1 : 1) * random(e.h * 0.1, e.h * 0.45);
 	},
 	
 	update: function() {
@@ -144,17 +142,15 @@ var eb = {
 			this.yVel = 0;
 		}
 		
-		if(this.y < 0) {
+			//add margin of error when bouncing off wall
+		if(this.y < 0 || this.y + b.size > canvas.height) {
 			this.yVel *= -1;
-			this.xVel += randomf(-3, 3);
-			this.y = 0;
-		} else if(this.y + b.size > canvas.height) {
-			this.yVel *= -1;
-			this.xVel += randomf(-3, 3);
-			this.y = canvas.height - b.size;
+			var scale = ((this.x / canvas.width) * 5);
+			this.xVel += randomf(scale * -0.5, scale * 0.5);
+			this.y = this.y < 0 ? 0 : canvas.height - b.size;
 		}
 		
-		if(this.xVel === 0) this.yVel = (b.y - this.y) / 120;
+		if(this.xVel === 0) this.yVel = (b.y - this.y) / 200;
 		
 		this.x += this.xVel;
 		this.y += this.yVel;
@@ -234,6 +230,8 @@ var b = {
 		
 		game.lastSide = side;
 		game.waiting = true;
+		
+		eb.error = 0;
 	}
 };
 
@@ -247,9 +245,58 @@ retroFont.load().then(function(font) {
 
 //_____ HTML INPUT FUNCTIONS _____//
 
+doc.easy = document.getElementById("easy");
+doc.easyText = document.getElementById("easyText");
+doc.medium = document.getElementById("medium");
+doc.mediumText = document.getElementById("mediumText");
+doc.hard = document.getElementById("hard");
+doc.hardText = document.getElementById("hardText");
+doc.extreme = document.getElementById("extreme");
+doc.extremeText = document.getElementById("extremeText");
+
+	//difficulty
+doc.easyText.onclick = function() { doc.easy.click(); };
+doc.easy.onclick = function() {
+	setDifficulty(0);
+	doc.easy.checked = true;
+};
+
+doc.mediumText.onclick = function() { doc.medium.click(); };
+doc.medium.onclick = function() {
+	setDifficulty(1);
+	doc.medium.checked = true;
+};
+
+doc.hardText.onclick = function() { doc.hard.click(); };
+doc.hard.onclick = function() {
+	setDifficulty(2);
+	doc.hard.checked = true;
+};
+
+doc.extremeText.onclick = function() { doc.extreme.click(); };
+doc.extreme.onclick = function() {
+	setDifficulty(3);
+	doc.extreme.checked = true;
+};
+
+function setDifficulty(lv) {
+	doc.paddleSlider.value = levels[lv][0];
+	paddleSliderInput();
+	
+	doc.paddleSpeedSlider.value = levels[lv][1];
+	paddleSpeedSliderInput();
+	
+	doc.ballSlider.value = levels[lv][2];
+	ballSliderInput();
+	
+	doc.difficultySlider.value = levels[lv][3];
+	difficultySliderInput();
+}
 
 doc.paddleSize = document.getElementById("paddleSize");
 doc.paddleSlider = document.getElementById("paddleSlider");
+doc.paddleSpeed = document.getElementById("paddleSpeed");
+doc.paddleSpeedSlider = document.getElementById("paddleSpeedSlider");
 doc.ballSpeed = document.getElementById("ballSpeed");
 doc.ballSlider = document.getElementById("ballSlider");
 doc.difficulty = document.getElementById("difficulty");
@@ -260,12 +307,16 @@ doc.multiplayerText = document.getElementById("multiplayerText");
 doc.paddleSlider.value = 50;
 doc.paddleSize.value = doc.paddleSlider.value;
 
+doc.paddleSpeedSlider.value = 50;
+doc.paddleSpeed.value = doc.paddleSpeedSlider.value;
+
 doc.ballSlider.value = 50;
 doc.ballSpeed.value = doc.ballSlider.value;
 	
 doc.difficultySlider.value = 50;
 doc.difficulty.value = doc.difficultySlider.value;
 
+	//paddle size
 doc.paddleSlider.oninput = paddleSliderInput;
 
 doc.paddleSize.onclick = function() {
@@ -274,7 +325,7 @@ doc.paddleSize.onclick = function() {
 };
 
 function paddleSliderInput() {
-	var max = 100;
+	var max = 200;
 	var min = 10;
 	
 	var val = (((doc.paddleSlider.value - 0) * (max - min)) / (100 - 0)) + min;
@@ -287,8 +338,40 @@ function paddleSliderInput() {
 	e.h = val;
 	
 	doc.paddleSize.value = doc.paddleSlider.value;
+	
+	doc.easy.checked = false;
+	doc.medium.checked = false;
+	doc.hard.checked = false;
+	doc.extreme.checked = false;
 }
 
+	//paddle speed
+doc.paddleSpeedSlider.oninput = paddleSpeedSliderInput;
+
+doc.paddleSpeed.onclick = function() {
+	doc.paddleSpeedSlider.value = prompt("Input paddle speed from 0 to 100", 50);
+	paddleSpeedSliderInput();
+};
+
+function paddleSpeedSliderInput() {
+	var max = 200;
+	var min = 25;
+	
+	var val = (((doc.paddleSpeedSlider.value - 0) * (max - min)) / (100 - 0)) + min;
+	val = (val / ((max + min) / 2)) * p._spd;
+	
+	p.spd = val;
+	e.spd = val;
+	
+	doc.paddleSpeed.value = doc.paddleSpeedSlider.value;
+	
+	doc.easy.checked = false;
+	doc.medium.checked = false;
+	doc.hard.checked = false;
+	doc.extreme.checked = false;
+}
+
+	//ball speed
 doc.ballSlider.oninput = ballSliderInput;
 
 doc.ballSpeed.onclick = function() {
@@ -306,12 +389,15 @@ function ballSliderInput() {
 	b.startXCap = val * b._xCap;
 	b.startYCap = val * 0.8 * b._yCap;
 	
-	p.spd = val * p._spd;
-	e.spd = val * 1.2 * e._spd;
-	
 	doc.ballSpeed.value = doc.ballSlider.value;
+	
+	doc.easy.checked = false;
+	doc.medium.checked = false;
+	doc.hard.checked = false;
+	doc.extreme.checked = false;
 }
 
+	//AI difficulty
 doc.difficultySlider.oninput = difficultySliderInput;
 
 doc.difficulty.onclick = function() {
@@ -324,17 +410,22 @@ function difficultySliderInput() {
 	var min = 40;
 	
 	var val = (((doc.difficultySlider.value - 0) * (max - min)) / (100 - 0)) + min;
-	val = val / ((max + min) / 2);
+	//val = val / ((max + min) / 2);
 	invVal = (100 - val) / ((max + min) / 2);
 	
-	e.response = invVal * 2 * e._response;
-	eb.xErr = val * 1.5 * eb._xErr;
-	eb.yErr = val * 1.5 * eb._yErr;
-	eb.errorRate = val * 1.5 * eb._errorRate;
+	e.response = invVal * e._response;
+	eb.xErr = invVal * 15 * eb._xErr;
+	eb.yErr = invVal * 1 * eb._yErr;
+	eb.errorRate = invVal * 15 * eb._errorRate;
 	
 	e.error = 0;
 	
 	doc.difficulty.value = doc.difficultySlider.value;
+	
+	doc.easy.checked = false;
+	doc.medium.checked = false;
+	doc.hard.checked = false;
+	doc.extreme.checked = false;
 }
 
 doc.multiplayerText.onclick = function() {
@@ -343,6 +434,15 @@ doc.multiplayerText.onclick = function() {
 
 doc.multiplayer.onclick = function() {
 	game.changeMode();
+};
+
+doc.restart = document.getElementById("restart");
+
+doc.restart.onclick = function() {
+	p.score = 0;
+	e.score = 0;
+	game.paused = false;
+	b.reset(0);
 };
 
 //_____ INPUT FUNCTIONS _____//
@@ -419,6 +519,17 @@ function setup() {
 	
 	game.lastSide = 0;
 	
+	doc.paddleSlider.value = 25;
+	paddleSliderInput();
+	
+	doc.ballSlider.value = 50;
+	ballSliderInput();
+	
+	doc.difficultySlider.value = 50;
+	difficultySliderInput();
+	
+	doc.medium.click();
+	
 	time.start = new Date();
 	time.last = time.start;
 	window.requestAnimationFrame(update);
@@ -443,7 +554,10 @@ function update() {
 		p.update();
 		e.update();
 		
-		eb.error = time.roundTime * eb.errorRate;
+		//eb.error = time.roundTime * eb.errorRate;
+		eb.error += eb.errorRate + (Math.abs(b.yVel / b.yCap) / 50);
+		//debug(eb.error + "  -  " + (Math.abs(b.yVel / b.yCap) / 50));
+		
 	} else if(game.waiting && game.winner === 0) {
 		
 		c.textFont("Press Space", canvas.width / 2, canvas.height * 0.4, 50, "retro", "white", true);
@@ -473,6 +587,7 @@ function update() {
 		
 	c.rect(p.x, p.y, p.w, p.h, "white");
 	c.rect(e.x, e.y, e.w, e.h, "white");
+	//c.rect(e.x, e.y + (e.h / 2) - e.offset, 7, 7, "red", 0.8);
 	c.rect(b.x, b.y, b.size, b.size, "white");
 	//c.rect(eb.x, eb.y, b.size, b.size, "yellow", 0.5);
 	
