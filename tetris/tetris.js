@@ -1,6 +1,8 @@
 // jshint maxerr: 999
 // jshint loopfunc: true
 
+const VERSION = "1.3";
+
 var canvas = document.getElementById("gameCanvas");
 var uiCanvas = document.getElementById("uiCanvas");
 var ctx = canvas.getContext("2d");
@@ -628,6 +630,8 @@ function setScale(scale) {
 }
 
 function setup(delay) {
+	document.getElementById("versionInfo").innerHTML = 'v' + VERSION;
+	
   if(localStorage.getItem("width") !== null) {
   	game.width = parseInt(localStorage.getItem("width"));
   	game.uiWidth = parseInt(localStorage.getItem("uiWidth"));
