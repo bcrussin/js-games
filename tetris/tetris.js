@@ -151,10 +151,31 @@ var block = {
   moveDelay: 10,
   minDelay: 40,
   weights: [],
+  spawnList: [],
+  
+  genList: function() {
+  	this.spawnList = [];
+  	var nums = [1, 2, 3, 4, 5, 6, 7];
+  	for(let i = 0; i < 7; i++) {
+  		this.spawnList.push(nums.splice(random(0, nums.length - 1), 1));
+  	}
+  },
   
   spawn: function(id, rot) {
     if(id === 0) {
-      if(!isNaN(this.next)) this.id = this.next;
+    	
+    	if(this.spawnList.length === 0) this.genList();
+    	
+    	if(isNaN(this.next)) this.id = this.spawnList.shift();
+    	else this.id = this.next;
+    	
+    	
+    	if(this.spawnList.length === 0) this.genList();
+    	
+    	this.next = this.spawnList.shift();
+    	
+    		//random w/ weights method
+      /*if(!isNaN(this.next)) this.id = this.next;
       else this.id = randomBlock();
       
       this.next = randomBlock();
@@ -167,7 +188,7 @@ var block = {
       	if(this.weights[i] > 40) this.weights[i] = 40;
       	
       	this.weights[i] = this.weights[i].roundTens(3);
-      }
+      }*/
       //console.log(blockRef[this.next] + " (" + (this.next - 1) + ")");
       //console.log(this.weights);
     } else {
