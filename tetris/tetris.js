@@ -1,7 +1,7 @@
 // jshint maxerr: 999
 // jshint loopfunc: true
 
-const VERSION = "1.3.1";
+const VERSION = "1.3.2";
 
 var canvas = document.getElementById("gameCanvas");
 var uiCanvas = document.getElementById("uiCanvas");
@@ -166,7 +166,7 @@ var block = {
   spawn: function(id, rot) {
     if(id === 0) {
     	
-    	debug(this.spawnList);
+    	//debug(this.spawnList);
     	
     	if(this.spawnList.length === 0) this.genList();
     	
