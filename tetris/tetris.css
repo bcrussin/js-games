@@ -29,3 +29,9 @@ a {
 #gameCanvas {
   background-color: white;
 }
+
+#versionInfo {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+}
