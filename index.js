@@ -169,7 +169,7 @@ function update() {
   //c.text(menu.index, 5, 25, 20, "white");
   
   var left = Math.floor(((canvas.width / 2) / menu.spacing) - menu.index) - 1;
-  var right = Math.ceil(((canvas.width / 2) / menu.spacing) + menu.index);
+  var right = Math.ceil(((canvas.width / 2) / menu.spacing) + menu.index) - 1;
   
   var sizeMod, newWidth, newHeight;
   
