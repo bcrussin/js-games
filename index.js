@@ -9,6 +9,7 @@ var menu = {
   dir: null,
   dest: null,
   selected: false,
+  targetSet: false,
   
   select: function() {
     var loc = window.location.pathname;
@@ -160,8 +161,12 @@ function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   if(menu.selected) {
-    if(menu.x > -900) menu.x += (-1000 - menu.x) / menu.speed;
-    else window.location = menu.dir + menu.dest;
+    if(menu.x > -900) {
+      menu.x += (-1000 - menu.x) / menu.speed;
+    } else {
+      window.location = menu.dir + menu.dest;
+      menu.targetSet = true;
+    }
   } else {
     menu.x += ((menu.index * menu.spacing) - menu.x) / menu.speed;
   }
@@ -196,7 +201,7 @@ function update() {
   
   c.text("(use arrows + space to navigate)", canvas.width / 2, canvas.height - 10, 15, "white", true);
   
-  window.requestAnimationFrame(update);
+  if(!menu.targetSet) window.requestAnimationFrame(update);
 }
 
 setup();
